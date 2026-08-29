@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoTagged - Complaint Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="brand">Geo<span>Tagged</span></div>
+    <div class="nav-actions">
+      <button class="btn btn-outline" onclick="showPage('login')">Login</button>
+      <button class="btn btn-primary" onclick="showPage('signup')">Create Account</button>
+    </div>
+  </nav>
+
+  <main>
+    <section id="home" class="page active">
+      <div class="hero">
+        <div class="hero-text">
+          <div class="badge">SMART • LOCATION-BASED • CITIZEN-CENTRIC</div>
+          <h1>Report problems.<br><span>Improve your community.</span></h1>
+          <p>GeoTagged helps citizens report civic issues with precise location, photos and complaint details — all in one place.</p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary btn-large" onclick="showPage('login')">Report a Complaint →</button>
+            <button class="btn btn-light btn-large" onclick="showPage('signup')">Create Account</button>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="map-preview">
+            <div class="map-grid"></div>
+            <div class="pin pin1">📍</div>
+            <div class="pin pin2">📍</div>
+            <div class="pin pin3">📍</div>
+            <div class="map-label">Live complaint locations</div>
+          </div>
+          <div class="mini-stat"><strong>1,284</strong><span>Complaints reported</span></div>
+          <div class="mini-stat"><strong>87%</strong><span>Resolved successfully</span></div>
+        </div>
+      </div>
+
+      <div class="features">
+        <div class="feature"><div class="feature-icon">📍</div><h3>Geo-Tagged</h3><p>Attach the exact location of an issue.</p></div>
+        <div class="feature"><div class="feature-icon">📷</div><h3>Photo Evidence</h3><p>Upload images to explain the problem.</p></div>
+        <div class="feature"><div class="feature-icon">📊</div><h3>Track Status</h3><p>Follow your complaint from report to resolution.</p></div>
+      </div>
+    </section>
+
+    <section id="login" class="page">
+      <div class="auth-wrap">
+        <div class="auth-card">
+          <button class="back" onclick="showPage('home')">← Back</button>
+          <div class="auth-logo">GeoTagged</div>
+          <h2>Welcome back</h2>
+          <p class="muted">Login to manage your complaints.</p>
+          <form onsubmit="login(event)">
+            <label>Email</label>
+            <input id="loginEmail" type="email" placeholder="you@example.com" required>
+            <label>Password</label>
+            <input type="password" placeholder="••••••••" required>
+            <button class="btn btn-primary full" type="submit">Login</button>
+          </form>
+          <p class="switch">Don't have an account? <button onclick="showPage('signup')">Create Account</button></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="signup" class="page">
+      <div class="auth-wrap">
+        <div class="auth-card wide">
+          <button class="back" onclick="showPage('home')">← Back</button>
+          <div class="auth-logo">GeoTagged</div>
+          <h2>Create your account</h2>
+          <p class="muted">Join the community and report local issues.</p>
+          <form onsubmit="signup(event)">
+            <div class="two-col">
+              <div><label>Full Name</label><input id="signupName" type="text" placeholder="Your name" required></div>
+              <div><label>Mobile Number</label><input type="tel" placeholder="+91 98765 43210" required></div>
+            </div>
+            <label>Email</label>
+            <input type="email" placeholder="you@example.com" required>
+            <div class="two-col">
+              <div><label>Password</label><input type="password" placeholder="Create password" required></div>
+              <div><label>Confirm Password</label><input type="password" placeholder="Confirm password" required></div>
+            </div>
+            <button class="btn btn-primary full" type="submit">Create Account</button>
+          </form>
+          <p class="switch">Already have an account? <button onclick="showPage('login')">Login</button></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard" class="page">
+      <div class="dashboard">
+        <div class="dash-top">
+          <div><div class="badge">CITIZEN DASHBOARD</div><h2>Welcome, <span id="userName">Citizen</span> 👋</h2><p class="muted">Report and track civic issues in your area.</p></div>
+          <button class="btn btn-primary" onclick="showPage('complaint')">+ Report Complaint</button>
+        </div>
+        <div class="stats">
+          <div class="stat-card"><span>Total Complaints</span><strong>2</strong></div>
+          <div class="stat-card"><span>Pending</span><strong>1</strong></div>
+          <div class="stat-card"><span>Resolved</span><strong>1</strong></div>
+        </div>
+        <div class="content-grid">
+          <div class="panel">
+            <div class="panel-head"><h3>Recent Complaints</h3><span class="status-dot">● Live</span></div>
+            <div class="complaint-row"><div class="complaint-icon">🛣️</div><div class="complaint-info"><strong>Road Damage</strong><span>📍 Padur, Chennai</span></div><span class="tag pending">Pending</span></div>
+            <div class="complaint-row"><div class="complaint-icon">💡</div><div class="complaint-info"><strong>Street Light</strong><span>📍 Kelambakkam, Chennai</span></div><span class="tag resolved">Resolved</span></div>
+          </div>
+          <div class="panel map-panel"><h3>Complaint Map</h3><div class="map-large"><div class="pin pin4">📍</div><div class="pin pin5">📍</div><div class="map-label">Reported issues near you</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="complaint" class="page">
+      <div class="complaint-wrap">
+        <div class="complaint-head"><button class="back" onclick="showPage('dashboard')">← Dashboard</button><h2>Submit a Complaint</h2><p class="muted">Provide details so the issue can be identified and resolved faster.</p></div>
+        <form class="complaint-card" onsubmit="submitComplaint(event)">
+          <div class="two-col">
+            <div><label>Complaint Category</label><select required><option value="">Select category</option><option>Road Damage</option><option>Street Light</option><option>Garbage / Waste</option><option>Water Supply</option><option>Drainage</option><option>Other</option></select></div>
+            <div><label>Priority</label><select><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+          </div>
+          <label>Description</label>
+          <textarea placeholder="Describe the issue..." required></textarea>
+          <div class="location-box">
+            <div><strong>📍 Complaint Location</strong><p id="locationText">Location not selected</p></div>
+            <button type="button" class="btn btn-outline" onclick="getLocation()">Use My Current Location</button>
+          </div>
+          <div class="fake-map"><div class="map-grid"></div><div id="locationPin" class="pin center-pin">📍</div><span>Map preview</span></div>
+          <label>Upload Photo</label>
+          <input class="file-input" type="file" accept="image/*">
+          <button class="btn btn-primary full btn-large" type="submit">Submit Complaint</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 GeoTagged Complaint Portal • Prototype for Design Project</footer>
+  <script src="script.js"></script>
+</body>
+</html>
