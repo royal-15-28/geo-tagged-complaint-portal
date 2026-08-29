@@ -138,5 +138,24 @@
 
   <footer>© 2026 GeoTagged Complaint Portal • Prototype for Design Project</footer>
   <script src="script.js"></script>
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7PAZlZgM9SIfMUJKGA5z7_TAmOa-r_JM",
+    authDomain: "geotagged-complaint-portal.firebaseapp.com",
+    projectId: "geotagged-complaint-portal",
+    storageBucket: "geotagged-complaint-portal.firebasestorage.app",
+    messagingSenderId: "1040449501813",
+    appId: "1:1040449501813:web:437c3e3e8063c577e3963c"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
 </body>
 </html>
