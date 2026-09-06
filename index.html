@@ -18,6 +18,10 @@
     rel="stylesheet"
     href="style.css"
   >
+  <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
 </head>
 
@@ -105,73 +109,39 @@
               Report a Complaint →
             </button>
 
-
-            <button
-              class="btn btn-light btn-large"
-              onclick="showPage('signup')"
-            >
-              Create Account
-            </button>
-
           </div>
 
         </div>
 
 
 
-        <div class="hero-card">
+        <div class="hero-card cleanliness-card">
 
-          <div class="map-preview">
+  <div class="cleanliness-icon">
+    🧹
+  </div>
 
-            <div class="map-grid"></div>
+  <div class="cleanliness-content">
+    <span class="cleanliness-label">KEEP • CLEAN • CARE</span>
 
-            <div class="pin pin1">
-              📍
-            </div>
+    <h2>
+      Clean streets.<br>
+      <span>Healthy communities.</span>
+    </h2>
 
-            <div class="pin pin2">
-              📍
-            </div>
+    <p>
+      A cleaner neighbourhood begins with every one of us.
+      Report civic issues and help keep our surroundings
+      safe, clean and beautiful.
+    </p>
 
-            <div class="pin pin3">
-              📍
-            </div>
+    <div class="cleanliness-quote">
+      “Cleanliness is not someone else's responsibility.
+      It starts with us.”
+    </div>
+  </div>
 
-            <div class="map-label">
-              Live complaint locations
-            </div>
-
-          </div>
-
-
-          <div class="mini-stat">
-
-            <strong>
-              1,284
-            </strong>
-
-            <span>
-              Complaints reported
-            </span>
-
-          </div>
-
-
-          <div class="mini-stat">
-
-            <strong>
-              87%
-            </strong>
-
-            <span>
-              Resolved successfully
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
+</div>
 
 
 
@@ -627,7 +597,7 @@
 
             <button
               class="btn btn-primary"
-              onclick="showPage('complaint')"
+              onclick="showPage('complaint'); initLocationMap()"
             >
               + Report Complaint
             </button>
@@ -687,6 +657,10 @@
           </div>
 
         </div>
+        <div class="stat-card">
+  <span>💰 Wallet Credits</span>
+  <strong id="walletCredits">0</strong>
+</div>
 
 
 
@@ -726,21 +700,9 @@
               Complaint Map
             </h3>
 
-            <div class="map-large">
+            <div class="map-large" id="complaintMap">
 
-              <div class="pin pin4">
-                📍
-              </div>
-
-              <div class="pin pin5">
-                📍
-              </div>
-
-              <div class="map-label">
-                Reported issues near you
-              </div>
-
-            </div>
+             
 
           </div>
 
@@ -812,12 +774,22 @@
 
 
           <div id="agentComplaints">
+  <p class="muted">
+    Loading complaints...
+  </p>
+</div>
 
-            <p class="muted">
-              Loading complaints...
-            </p>
+<div class="panel" style="margin-top:20px;">
+  <div class="panel-head">
+    <h3>Complaint Locations</h3>
+    <span class="status-dot">● Live</span>
+  </div>
 
-          </div>
+  <div
+    id="agentComplaintMap"
+    class="map-large"
+  ></div>
+</div>
 
         </div>
 
@@ -986,25 +958,10 @@
 
 
 
-          <div class="fake-map">
-
-            <div class="map-grid"></div>
-
-            <div
-              id="locationPin"
-              class="pin center-pin"
-            >
-              📍
-            </div>
-
-            <span>
-              Map preview
-            </span>
-
-          </div>
-
-
-
+          <div class="fake-map" id="locationMap"></div>
+            
+          
+          
           <label>
             Upload Photo
           </label>
@@ -1035,18 +992,9 @@
 
 
 
-  <!-- =================================================
-       FOOTER
-  ================================================== -->
+  
 
-  <footer>
-
-    © 2026 GeoTagged Complaint Portal
-    • Prototype for Design Project
-
-  </footer>
-
-
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script
     type="module"
