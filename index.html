@@ -1,1007 +1,930 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>
-    GeoTagged - Complaint Portal
-  </title>
-
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-  <link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoTagged - National Civic Grievance & Municipal Redressal Portal</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
-
-
 <body>
 
+  <!-- Official GIGW Government Accessibility & Helpline Bar -->
+  <div class="gov-top-bar">
+    <div class="gov-top-left">
+      <span class="emblem-tag">🏛️ सत्यमेव जयते</span>
+      <span>GOVERNMENT OF INDIA • URBAN LOCAL BODIES PUBLIC GRIEVANCE PORTAL</span>
+    </div>
+    <div class="gov-top-right">
+      <span class="helpline-badge">📞 TOLL-FREE: 1913 | EMERGENCY: 112</span>
+      <div class="access-controls">
+        <button class="access-btn" onclick="setFontSize('small')" title="Decrease Font">A-</button>
+        <button class="access-btn" onclick="setFontSize('normal')" title="Reset Font">A</button>
+        <button class="access-btn" onclick="setFontSize('large')" title="Increase Font">A+</button>
+        <button class="access-btn" onclick="toggleContrast()" title="High Contrast Mode">🌓</button>
+        <span style="color:#64748B;">|</span>
+        <button class="access-btn" onclick="toggleLang()" id="langBtn">हिन्दी</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Tricolor Accent Strip -->
+  <div class="top-tricolor-strip"></div>
 
   <!-- =================================================
        NAVBAR
   ================================================== -->
-
   <nav class="navbar">
-
-    <div class="brand">
-      Geo<span>Tagged</span>
+    <div class="brand-wrapper" onclick="showPage('home')">
+      <svg class="brand-pin-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 38C20 38 33 24.5 33 15C33 7.82 27.18 2 20 2C12.82 2 7 7.82 7 15C7 24.5 20 38 20 38Z" fill="url(#pinGrad)"/>
+        <circle cx="20" cy="15" r="5" fill="#0A192F"/>
+        <defs>
+          <linearGradient id="pinGrad" x1="7" y1="2" x2="33" y2="38" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#FF671F"/>
+            <stop offset="48%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#046A38"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div>
+        <div class="brand">Geo<span>Tagged</span></div>
+        <span class="brand-subtitle">National Civic Grievance Portal</span>
+      </div>
     </div>
 
+    <ul class="nav-menu">
+      <li><a class="nav-link active" onclick="showPage('home')">Home</a></li>
+      <li><a class="nav-link" href="#charter">Citizen's Charter</a></li>
+      <li><a class="nav-link" href="#features">Features</a></li>
+      <li><a class="nav-link" onclick="openTrackModal()">Track Docket</a></li>
+      <li><a class="nav-link" onclick="showPage('agentLogin')">Municipal Officer Login</a></li>
+    </ul>
 
     <div class="nav-actions">
-
-      <button
-        class="btn btn-outline"
-        onclick="showPage('login')"
-      >
-        Login
+      <button class="btn btn-outline" onclick="showPage('login')">
+        <span>👤</span> Citizen Login
       </button>
-
-
-      <button
-        class="btn btn-primary"
-        onclick="showPage('signup')"
-      >
-        Create Account
+      <button class="btn btn-primary" onclick="showPage('signup')">
+        <span>➕</span> Register
       </button>
-
     </div>
-
   </nav>
 
-
+  <!-- Live Municipal Announcement Ticker -->
+  <div class="municipal-ticker">
+    <span class="ticker-badge">📢 MUNICIPAL BULLETIN</span>
+    <div class="ticker-marquee">
+      Special Monsoon Road Restoration Drive active across Wards 4 to 18 • 24x7 Municipal Control Room: 1913 • Report open manholes for emergency 6-hour SLA action • Citizen feedback open for Smart City Ward Development Plans.
+    </div>
+  </div>
 
   <main>
-
 
     <!-- =================================================
          HOME
     ================================================== -->
-
-    <section
-      id="home"
-      class="page active"
-    >
-
-      <div class="hero">
-
-
-        <div class="hero-text">
-
-          <div class="badge">
-            SMART • LOCATION-BASED • CITIZEN-CENTRIC
+    <section id="home" class="page active">
+      <div class="hero-wrapper">
+        <div class="hero-overlay"></div>
+        <div class="hero-container">
+          <div class="hero-text">
+            <h1 class="hero-title">
+              Report Issues.<br>
+              <span class="highlight-saffron">Make Your</span> <span class="highlight-green">City Better.</span>
+            </h1>
+            <p class="hero-desc">
+              National Geo-Tagged Public Grievance Portal empowering citizens to report municipal issues with verified GPS coordinates, photo evidence, and statutory SLA-bound time limits under the Digital India Municipal Governance framework.
+            </p>
+            <div class="hero-buttons">
+              <button class="btn btn-hero-green" onclick="showPage('login')">
+                <span>✍</span> Lodge a Grievance
+              </button>
+              <button class="btn btn-hero-outline" onclick="openTrackModal()">
+                <span>🔍</span> Track Grievance Status
+              </button>
+            </div>
           </div>
 
+          <!-- Quick Actions Card -->
+          <div class="quick-actions-card">
+            <h3>Quick Civic Actions</h3>
+            <div class="action-list">
+              <div class="action-item" onclick="showPage('login')">
+                <div class="action-icon orange">✍</div>
+                <div class="action-info">
+                  <strong>Lodge a Grievance</strong>
+                  <span>Submit issue with GPS location & photo</span>
+                </div>
+                <div class="action-arrow">›</div>
+              </div>
 
-          <h1>
-            Report problems.<br>
-            <span>
-              Improve your community.
-            </span>
-          </h1>
+              <div class="action-item" onclick="openTrackModal()">
+                <div class="action-icon blue">🔍</div>
+                <div class="action-info">
+                  <strong>Track Docket Status</strong>
+                  <span>Instant lookup without login</span>
+                </div>
+                <div class="action-arrow">›</div>
+              </div>
 
+              <div class="action-item" onclick="showPage('agentLogin')">
+                <div class="action-icon green">🖥</div>
+                <div class="action-info">
+                  <strong>Municipal Officer Portal</strong>
+                  <span>Field agent resolution workspace</span>
+                </div>
+                <div class="action-arrow">›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <p>
-            GeoTagged helps citizens report civic
-            issues with precise location, photos
-            and complaint details — all in one place.
-          </p>
+      <!-- Main Home Content -->
+      <div class="home-content-wrap">
 
-
-          <div class="hero-buttons">
-
-            <button
-              class="btn btn-primary btn-large"
-              onclick="showPage('login')"
-            >
-              Report a Complaint →
-            </button>
-
+        <!-- Citizen's Charter & Statutory SLAs -->
+        <div id="charter" class="charter-section">
+          <div class="charter-head">
+            <span class="badge">STATUTORY CITIZEN'S CHARTER</span>
+            <h2>Municipal Service Level Agreements (SLAs)</h2>
+            <p>Every grievance lodged on GeoTagged is bound by statutory time limits under the Urban Local Bodies Redressal Act. Issues not resolved within the SLA are automatically escalated.</p>
           </div>
 
+          <div class="charter-grid">
+            <div class="charter-card urgent">
+              <div class="charter-card-top">
+                <div class="charter-icon">🧹</div>
+                <div>
+                  <h4 class="charter-title">Solid Waste & Garbage</h4>
+                  <span class="charter-dept">Health & Sanitation Wing</span>
+                </div>
+              </div>
+              <p class="muted" style="font-size:13px; margin:0 0 10px;">Overflowing bins, uncollected road waste, and illegal dumping.</p>
+              <div class="charter-sla-row">
+                <span class="sla-pill fast">⚡ SLA: 24 Hours</span>
+                <span class="charter-escalation">Escalation: Health Officer</span>
+              </div>
+            </div>
+
+            <div class="charter-card urgent">
+              <div class="charter-card-top">
+                <div class="charter-icon">🚰</div>
+                <div>
+                  <h4 class="charter-title">Water Supply & Leakage</h4>
+                  <span class="charter-dept">Water & Sewerage Board</span>
+                </div>
+              </div>
+              <p class="muted" style="font-size:13px; margin:0 0 10px;">Pipeline bursts, contaminated water supply, and valve failures.</p>
+              <div class="charter-sla-row">
+                <span class="sla-pill fast">⚡ SLA: 24 Hours</span>
+                <span class="charter-escalation">Escalation: Assistant Exec Engineer</span>
+              </div>
+            </div>
+
+            <div class="charter-card">
+              <div class="charter-card-top">
+                <div class="charter-icon">💡</div>
+                <div>
+                  <h4 class="charter-title">Street Lighting & Electrical</h4>
+                  <span class="charter-dept">Electrical Maintenance Division</span>
+                </div>
+              </div>
+              <p class="muted" style="font-size:13px; margin:0 0 10px;">Non-functional streetlights, open junction boxes, damaged poles.</p>
+              <div class="charter-sla-row">
+                <span class="sla-pill">⏱ SLA: 48 Hours</span>
+                <span class="charter-escalation">Escalation: Zonal Engineer</span>
+              </div>
+            </div>
+
+            <div class="charter-card">
+              <div class="charter-card-top">
+                <div class="charter-icon">🛣</div>
+                <div>
+                  <h4 class="charter-title">Road Repairs & Potholes</h4>
+                  <span class="charter-dept">Public Works Dept (PWD)</span>
+                </div>
+              </div>
+              <p class="muted" style="font-size:13px; margin:0 0 10px;">Potholes, broken footpaths, road cave-ins, and uneven surfaces.</p>
+              <div class="charter-sla-row">
+                <span class="sla-pill">⏱ SLA: 7 Working Days</span>
+                <span class="charter-escalation">Escalation: Executive Engineer (Roads)</span>
+              </div>
+            </div>
+
+            <div class="charter-card">
+              <div class="charter-card-top">
+                <div class="charter-icon">🌊</div>
+                <div>
+                  <h4 class="charter-title">Drainage & Stormwater</h4>
+                  <span class="charter-dept">Storm Water Drainage Wing</span>
+                </div>
+              </div>
+              <p class="muted" style="font-size:13px; margin:0 0 10px;">Clogged storm drains, waterlogging, broken manhole covers.</p>
+              <div class="charter-sla-row">
+                <span class="sla-pill">⏱ SLA: 48 Hours</span>
+                <span class="charter-escalation">Escalation: Superintendent Engineer</span>
+              </div>
+            </div>
+
+            <div class="charter-card">
+              <div class="charter-card-top">
+                <div class="charter-icon">🌳</div>
+                <div>
+                  <h4 class="charter-title">Public Spaces & Other</h4>
+                  <span class="charter-dept">Town Planning & Horticulture</span>
+                </div>
+              </div>
+              <p class="muted" style="font-size:13px; margin:0 0 10px;">Fallen tree branches, park maintenance, encroachment notices.</p>
+              <div class="charter-sla-row">
+                <span class="sla-pill">⏱ SLA: 5 Working Days</span>
+                <span class="charter-escalation">Escalation: Joint Commissioner</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-
-
-        <div class="hero-card cleanliness-card">
-
-  <div class="cleanliness-icon">
-    🧹
-  </div>
-
-  <div class="cleanliness-content">
-    <span class="cleanliness-label">KEEP • CLEAN • CARE</span>
-
-    <h2>
-      Clean streets.<br>
-      <span>Healthy communities.</span>
-    </h2>
-
-    <p>
-      A cleaner neighbourhood begins with every one of us.
-      Report civic issues and help keep our surroundings
-      safe, clean and beautiful.
-    </p>
-
-    <div class="cleanliness-quote">
-      “Cleanliness is not someone else's responsibility.
-      It starts with us.”
-    </div>
-  </div>
-
-</div>
-
-
-
-      <div class="features">
-
-        <div class="feature">
-
-          <div class="feature-icon">
-            📍
+        <!-- 3 Core Civic Features -->
+        <div id="features" class="features">
+          <div class="feature">
+            <div class="feature-icon">📍</div>
+            <h3>Sub-Meter Geo-Tagging</h3>
+            <p>Pins exact high-precision GPS coordinates to municipal GIS maps for pinpoint zonal field officer dispatch.</p>
           </div>
-
-          <h3>
-            Geo-Tagged
-          </h3>
-
-          <p>
-            Attach the exact location of an issue.
-          </p>
-
-        </div>
-
-
-        <div class="feature">
-
-          <div class="feature-icon">
-            📷
+          <div class="feature">
+            <div class="feature-icon">📷</div>
+            <h3>Photographic Evidence</h3>
+            <p>Upload time-stamped images directly from ground level to prevent duplicate filings and ensure verifiable accountability.</p>
           </div>
-
-          <h3>
-            Photo Evidence
-          </h3>
-
-          <p>
-            Upload images to explain the problem.
-          </p>
-
-        </div>
-
-
-        <div class="feature">
-
-          <div class="feature-icon">
-            📊
+          <div class="feature">
+            <div class="feature-icon">📊</div>
+            <h3>End-to-End Transparency</h3>
+            <p>Track your docket live across every milestone: Verification → Field Inspection → Work in Progress → Closure with Photo Proof.</p>
           </div>
-
-          <h3>
-            Track Status
-          </h3>
-
-          <p>
-            Follow your complaint from report
-            to resolution.
-          </p>
-
         </div>
 
       </div>
-
     </section>
-
-
 
     <!-- =================================================
          CITIZEN LOGIN
     ================================================== -->
-
-    <section
-      id="login"
-      class="page"
-    >
-
+    <section id="login" class="page">
       <div class="auth-wrap">
-
         <div class="auth-card">
-
-          <button
-            class="back"
-            onclick="showPage('home')"
-          >
-            ← Back
-          </button>
-
-
-          <div class="auth-logo">
-            GeoTagged
-          </div>
-
-
-          <h2>
-            Welcome back
-          </h2>
-
-
-          <p class="muted">
-            Login to manage your complaints.
-          </p>
-
+          <button class="back" onclick="showPage('home')">← Back to Portal Home</button>
+          <div class="auth-logo">Geo<span>Tagged</span> Citizen Portal</div>
+          <h2>Citizen Authentication</h2>
+          <p class="muted">Login with your registered credentials to lodge and track grievances.</p>
 
           <form onsubmit="login(event)">
+            <label>Registered Email Address</label>
+            <input id="loginEmail" type="email" placeholder="citizen@example.com" required>
 
-            <label>
-              Email
-            </label>
+            <label>Password</label>
+            <input id="loginPassword" type="password" placeholder="••••••••" required>
 
-            <input
-              id="loginEmail"
-              type="email"
-              placeholder="you@example.com"
-              required
-            >
-
-
-            <label>
-              Password
-            </label>
-
-            <input
-              id="loginPassword"
-              type="password"
-              placeholder="••••••••"
-              required
-            >
-
-
-            <button
-              class="btn btn-primary full"
-              type="submit"
-            >
-              Login
-            </button>
-
+            <button class="btn btn-primary full btn-large" type="submit">Sign In to Citizen Dashboard</button>
           </form>
 
-
           <p class="switch">
-
-            Don't have an account?
-
-            <button
-              type="button"
-              onclick="showPage('signup')"
-            >
-              Create Account
-            </button>
-
+            New Citizen User?
+            <button type="button" onclick="showPage('signup')">Register New Account</button>
           </p>
 
-
           <p class="switch">
-
-            Are you an agent?
-
-            <button
-              type="button"
-              onclick="showPage('agentLogin')"
-            >
-              Agent Login
-            </button>
-
+            Authorized Municipal Officer?
+            <button type="button" onclick="showPage('agentLogin')">Officer Login Portal</button>
           </p>
-
         </div>
-
       </div>
-
     </section>
-
-
 
     <!-- =================================================
          AGENT LOGIN
     ================================================== -->
-
-    <section
-      id="agentLogin"
-      class="page"
-    >
-
+    <section id="agentLogin" class="page">
       <div class="auth-wrap">
-
         <div class="auth-card">
-
-          <button
-            class="back"
-            onclick="showPage('login')"
-          >
-            ← Back
-          </button>
-
-
-          <div class="auth-logo">
-            GeoTagged
-          </div>
-
-
-          <h2>
-            Agent Login
-          </h2>
-
-
-          <p class="muted">
-            Login to manage citizen complaints.
-          </p>
-
+          <button class="back" onclick="showPage('home')">← Back to Portal Home</button>
+          <div class="auth-logo">Geo<span>Tagged</span> Officer Portal</div>
+          <h2>Municipal Officer Login</h2>
+          <p class="muted">Restricted access for designated Zonal and Ward Field Officers.</p>
 
           <form onsubmit="agentLogin(event)">
+            <label>Official Officer Email</label>
+            <input id="agentEmail" type="email" placeholder="agent@geotagged.com" required>
 
-            <label>
-              Agent Email
-            </label>
+            <label>Officer Password</label>
+            <input id="agentPassword" type="password" placeholder="••••••••" required>
 
-            <input
-              id="agentEmail"
-              type="email"
-              placeholder="agent@geotagged.com"
-              required
-            >
-
-
-            <label>
-              Agent Password
-            </label>
-
-            <input
-              id="agentPassword"
-              type="password"
-              placeholder="••••••••"
-              required
-            >
-
-
-            <button
-              class="btn btn-primary full"
-              type="submit"
-            >
-              Login as Agent
-            </button>
-
+            <button class="btn btn-hero-green full btn-large" type="submit">Authorize & Enter Field Dashboard</button>
           </form>
 
-
           <p class="switch">
-
-            Citizen?
-
-            <button
-              type="button"
-              onclick="showPage('login')"
-            >
-              Citizen Login
-            </button>
-
+            Not an officer?
+            <button type="button" onclick="showPage('login')">Return to Citizen Login</button>
           </p>
-
         </div>
-
       </div>
-
     </section>
-
-
 
     <!-- =================================================
          SIGNUP
     ================================================== -->
-
-    <section
-      id="signup"
-      class="page"
-    >
-
+    <section id="signup" class="page">
       <div class="auth-wrap">
-
         <div class="auth-card wide">
-
-          <button
-            class="back"
-            onclick="showPage('home')"
-          >
-            ← Back
-          </button>
-
-
-          <div class="auth-logo">
-            GeoTagged
-          </div>
-
-
-          <h2>
-            Create your account
-          </h2>
-
-
-          <p class="muted">
-            Join the community and report local issues.
-          </p>
-
+          <button class="back" onclick="showPage('home')">← Back to Portal Home</button>
+          <div class="auth-logo">Geo<span>Tagged</span> Citizen Portal</div>
+          <h2>New Citizen Registration</h2>
+          <p class="muted">Create an account to participate in municipal grievance reporting and earn civic credits.</p>
 
           <form onsubmit="signup(event)">
-
             <div class="two-col">
-
               <div>
-
-                <label>
-                  Full Name
-                </label>
-
-                <input
-                  id="signupName"
-                  type="text"
-                  placeholder="Your name"
-                  required
-                >
-
+                <label>Full Legal Name</label>
+                <input id="signupName" type="text" placeholder="As per official ID" required>
               </div>
-
-
               <div>
-
-                <label>
-                  Mobile Number
-                </label>
-
-                <input
-                  type="tel"
-                  placeholder="+91 98765 43210"
-                  required
-                >
-
+                <label>Mobile Number (For SMS Updates)</label>
+                <input type="tel" placeholder="+91 98765 43210" required>
               </div>
-
             </div>
 
-
-            <label>
-              Email
-            </label>
-
-            <input
-              id="signupEmail"
-              type="email"
-              placeholder="you@example.com"
-              required
-            >
-
+            <label>Email Address</label>
+            <input id="signupEmail" type="email" placeholder="citizen@example.com" required>
 
             <div class="two-col">
-
               <div>
-
-                <label>
-                  Password
-                </label>
-
-                <input
-                  id="signupPassword"
-                  type="password"
-                  placeholder="Create password"
-                  required
-                >
-
+                <label>Create Password</label>
+                <input id="signupPassword" type="password" placeholder="Minimum 8 characters" required>
               </div>
-
-
               <div>
-
-                <label>
-                  Confirm Password
-                </label>
-
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="Confirm password"
-                  required
-                >
-
+                <label>Confirm Password</label>
+                <input id="confirmPassword" type="password" placeholder="Repeat password" required>
               </div>
-
             </div>
 
-
-            <button
-              class="btn btn-primary full"
-              type="submit"
-            >
-              Create Account
-            </button>
-
+            <button class="btn btn-primary full btn-large" type="submit">Complete Citizen Registration</button>
           </form>
 
-
           <p class="switch">
-
-            Already have an account?
-
-            <button
-              type="button"
-              onclick="showPage('login')"
-            >
-              Login
-            </button>
-
+            Already have an active account?
+            <button type="button" onclick="showPage('login')">Sign In</button>
           </p>
-
         </div>
-
       </div>
-
     </section>
-
-
 
     <!-- =================================================
          CITIZEN DASHBOARD
     ================================================== -->
-
-    <section
-      id="dashboard"
-      class="page"
-    >
-
-      <div class="dashboard">
-
-
-        <div class="dash-top">
-
-          <div>
-
-            <div class="badge">
-              CITIZEN DASHBOARD
+    <section id="dashboard" class="page">
+      <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+          <div class="sidebar-top">
+            <div class="sidebar-brand">
+              <svg class="brand-pin-icon" viewBox="0 0 40 40" fill="none">
+                <path d="M20 38C20 38 33 24.5 33 15C33 7.82 27.18 2 20 2C12.82 2 7 7.82 7 15C7 24.5 20 38 20 38Z" fill="#10B981"/>
+                <circle cx="20" cy="15" r="5" fill="#0A192F"/>
+              </svg>
+              <div>
+                <h2>Geo<span>Tagged</span></h2>
+                <span class="sidebar-panel-tag">Citizen Panel</span>
+              </div>
             </div>
 
-
-            <h2>
-              Welcome,
-              <span id="userName">
-                Citizen
-              </span>
-              👋
-            </h2>
-
-
-            <p class="muted">
-              Report and track civic issues in your area.
-            </p>
-
+            <ul class="sidebar-nav">
+              <li>
+                <button class="sidebar-link active" onclick="showPage('dashboard')">
+                  <span class="sidebar-link-icon">📊</span> Dashboard Overview
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-link" onclick="document.getElementById('citizenComplaints')?.scrollIntoView({behavior:'smooth'})">
+                  <span class="sidebar-link-icon">📋</span> My Lodged Grievances
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-link" onclick="showPage('complaint'); initLocationMap()">
+                  <span class="sidebar-link-icon">✍</span> Lodge New Grievance
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-link" onclick="openTrackModal()">
+                  <span class="sidebar-link-icon">🔍</span> Track Grievance Docket
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-link" onclick="showPage('home')">
+                  <span class="sidebar-link-icon">🏛️</span> Portal Home
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-link" onclick="logout()">
+                  <span class="sidebar-link-icon">🚪</span> Logout
+                </button>
+              </li>
+            </ul>
           </div>
 
+          <div class="sidebar-bottom">
+            <div class="sidebar-user-card">
+              <div class="user-avatar">👤</div>
+              <div class="user-details">
+                <strong id="userName">Citizen</strong>
+                <span>Verified Citizen User</span>
+              </div>
+            </div>
+          </div>
+        </aside>
 
-          <div>
-
-            <button
-              class="btn btn-primary"
-              onclick="showPage('complaint'); initLocationMap()"
-            >
-              + Report Complaint
-            </button>
-
-
-            <button
-              class="btn btn-outline"
-              onclick="logout()"
-            >
-              Logout
-            </button>
-
+        <!-- Main Dashboard Content -->
+        <div class="dashboard-main">
+          <div class="dash-header">
+            <div class="dash-header-title">
+              <h2>Citizen Dashboard</h2>
+              <p>Welcome back, <span id="userNameGreeting">Citizen</span>! 👋</p>
+            </div>
+            <div class="dash-header-actions">
+              <div class="bell-btn" title="Municipal Notifications">
+                🔔<span class="bell-badge"></span>
+              </div>
+              <button class="btn btn-hero-green" onclick="showPage('complaint'); initLocationMap()">
+                <span>+</span> Lodge Grievance
+              </button>
+              <button class="btn btn-outline" onclick="logout()">
+                Logout
+              </button>
+            </div>
           </div>
 
-        </div>
-
-
-
-        <div class="stats">
-
-          <div class="stat-card">
-
-            <span>
-              Total Complaints
-            </span>
-
-            <strong id="totalComplaints">
-              0
-            </strong>
-
-          </div>
-
-
-          <div class="stat-card">
-
-            <span>
-              Pending
-            </span>
-
-            <strong id="pendingComplaints">
-              0
-            </strong>
-
-          </div>
-
-
-          <div class="stat-card">
-
-            <span>
-              Resolved
-            </span>
-
-            <strong id="resolvedComplaints">
-              0
-            </strong>
-
-          </div>
-
-        </div>
-        <div class="stat-card">
-  <span>💰 Wallet Credits</span>
-  <strong id="walletCredits">0</strong>
-</div>
-
-
-
-        <div class="content-grid">
-
-
-          <div class="panel">
-
-            <div class="panel-head">
-
-              <h3>
-                My Complaints
-              </h3>
-
-              <span class="status-dot">
-                ● Live
-              </span>
-
+          <!-- 4 Stat Cards -->
+          <div class="stats-grid-4">
+            <div class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Total Lodged</span>
+                <div class="stat-mini-icon blue">📋</div>
+              </div>
+              <strong id="totalComplaints">0</strong>
+              <a class="stat-box-link" href="#citizenComplaints">View all ›</a>
             </div>
 
-
-            <div id="citizenComplaints">
-
-              <p class="muted">
-                No complaints submitted yet.
-              </p>
-
+            <div class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Under Resolution / Pending</span>
+                <div class="stat-mini-icon orange">⏳</div>
+              </div>
+              <strong id="pendingComplaints">0</strong>
+              <a class="stat-box-link" href="#citizenComplaints">View all ›</a>
             </div>
 
+            <div class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Resolved & Closed</span>
+                <div class="stat-mini-icon green">✔</div>
+              </div>
+              <strong id="resolvedComplaints">0</strong>
+              <a class="stat-box-link" href="#citizenComplaints">View all ›</a>
+            </div>
+
+            <div class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Civic Wallet Credits</span>
+                <div class="stat-mini-icon purple">💰</div>
+              </div>
+              <strong id="walletCredits">0</strong>
+              <span class="stat-box-link">Civic Reward Points</span>
+            </div>
           </div>
 
+          <!-- Grid: Complaints List and Map -->
+          <div class="dashboard-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <h3>My Filed Grievances</h3>
+                <span class="status-dot">● Live Feed</span>
+              </div>
+              <div id="citizenComplaints">
+                <p class="muted">No grievances submitted yet.</p>
+              </div>
+            </div>
 
-
-          <div class="panel map-panel">
-
-            <h3>
-              Complaint Map
-            </h3>
-
-            <div class="map-large" id="complaintMap">
-
-             
-
+            <div class="panel">
+              <div class="panel-head">
+                <h3>GIS Geo-Spatial Complaint Map</h3>
+                <span class="status-dot">● Live Map</span>
+              </div>
+              <div class="map-large" id="complaintMap"></div>
+            </div>
           </div>
-
         </div>
-
       </div>
-
     </section>
-
-
 
     <!-- =================================================
          AGENT DASHBOARD
     ================================================== -->
-
-    <section
-      id="agentDashboard"
-      class="page"
-    >
-
-      <div class="dashboard">
-
-
-        <div class="dash-top">
-
-          <div>
-
-            <div class="badge">
-              AGENT DASHBOARD
+    <section id="agentDashboard" class="page">
+      <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+          <div class="sidebar-top">
+            <div class="sidebar-brand">
+              <svg class="brand-pin-icon" viewBox="0 0 40 40" fill="none">
+                <path d="M20 38C20 38 33 24.5 33 15C33 7.82 27.18 2 20 2C12.82 2 7 7.82 7 15C7 24.5 20 38 20 38Z" fill="#10B981"/>
+                <circle cx="20" cy="15" r="5" fill="#0A192F"/>
+              </svg>
+              <div>
+                <h2>Geo<span>Tagged</span></h2>
+                <span class="sidebar-panel-tag">Municipal Officer Panel</span>
+              </div>
             </div>
 
-
-            <h2>
-              Complaint Management
-            </h2>
-
-
-            <p class="muted">
-              View and update citizen complaints.
-            </p>
-
+            <ul class="sidebar-nav">
+              <li>
+                <button class="sidebar-link active" onclick="showPage('agentDashboard')">
+                  <span class="sidebar-link-icon">📊</span> Field Dashboard
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-link" onclick="document.getElementById('agentComplaints')?.scrollIntoView({behavior:'smooth'})">
+                  <span class="sidebar-link-icon">📋</span> Ward Complaints
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-link" onclick="document.getElementById('agentComplaintMap')?.scrollIntoView({behavior:'smooth'})">
+                  <span class="sidebar-link-icon">📌</span> Zonal GIS Map
+                </button>
+              </li>
+              <li>
+                <button class="sidebar-link" onclick="logout()">
+                  <span class="sidebar-link-icon">🚪</span> Logout
+                </button>
+              </li>
+            </ul>
           </div>
 
+          <div class="sidebar-bottom">
+            <div class="sidebar-user-card">
+              <div class="user-avatar">🛡</div>
+              <div class="user-details">
+                <strong>Field Executive Officer</strong>
+                <span>agent@geotagged.com</span>
+              </div>
+            </div>
+          </div>
+        </aside>
 
-          <button
-            class="btn btn-outline"
-            onclick="logout()"
-          >
-            Logout
-          </button>
-
-        </div>
-
-
-
-        <div class="panel">
-
-          <div class="panel-head">
-
-            <h3>
-              Filed Complaints
-            </h3>
-
-            <span class="status-dot">
-              ● Live
-            </span>
-
+        <!-- Main Agent Content -->
+        <div class="dashboard-main">
+          <div class="dash-header">
+            <div class="dash-header-title">
+              <h2>Municipal Officer Command Workspace</h2>
+              <p>Zonal Grievance Redressal & Field Investigation Center</p>
+            </div>
+            <div class="dash-header-actions">
+              <div class="bell-btn" title="Escalation Alerts">
+                🔔<span class="bell-badge"></span>
+              </div>
+              <button class="btn btn-outline" onclick="logout()">
+                Logout
+              </button>
+            </div>
           </div>
 
+          <!-- 4 Stat Cards for Agent -->
+          <div class="stats-grid-4">
+            <div class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Total Ward Lodged</span>
+                <div class="stat-mini-icon blue">📋</div>
+              </div>
+              <strong id="agentTotalComplaints">0</strong>
+              <span class="stat-box-link">All Lodged Issues</span>
+            </div>
 
-          <div id="agentComplaints">
-  <p class="muted">
-    Loading complaints...
-  </p>
-</div>
+            <div class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">In Progress / Field Work</span>
+                <div class="stat-mini-icon orange">🔄</div>
+              </div>
+              <strong id="agentInProgressComplaints">0</strong>
+              <span class="stat-box-link">Active Action</span>
+            </div>
 
-<div class="panel" style="margin-top:20px;">
-  <div class="panel-head">
-    <h3>Complaint Locations</h3>
-    <span class="status-dot">● Live</span>
-  </div>
+            <div class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Successfully Resolved</span>
+                <div class="stat-mini-icon green">✔</div>
+              </div>
+              <strong id="agentResolvedComplaints">0</strong>
+              <span class="stat-box-link">Completed & Verified</span>
+            </div>
 
-  <div
-    id="agentComplaintMap"
-    class="map-large"
-  ></div>
-</div>
+            <div class="stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-label">Awaiting First Review</span>
+                <div class="stat-mini-icon purple">⏳</div>
+              </div>
+              <strong id="agentPendingComplaints">0</strong>
+              <span class="stat-box-link">SLA Countdown Active</span>
+            </div>
+          </div>
 
+          <!-- Complaints Overview Panel -->
+          <div class="panel" style="margin-bottom: 24px;">
+            <div class="panel-head">
+              <h3>Filed Ward Complaints</h3>
+              <span class="status-dot">● Live Updates</span>
+            </div>
+            <div id="agentComplaints">
+              <p class="muted">Loading complaints...</p>
+            </div>
+          </div>
+
+          <!-- Locations Map -->
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Ward Complaint GIS Locations</h3>
+              <span class="status-dot">● Interactive Field Map</span>
+            </div>
+            <div id="agentComplaintMap" class="map-large"></div>
+          </div>
         </div>
-
       </div>
-
     </section>
-
-
 
     <!-- =================================================
          SUBMIT COMPLAINT
     ================================================== -->
-
-    <section
-      id="complaint"
-      class="page"
-    >
-
+    <section id="complaint" class="page">
       <div class="complaint-wrap">
-
-
         <div class="complaint-head">
-
-          <button
-            class="back"
-            onclick="showPage('dashboard')"
-          >
-            ← Dashboard
-          </button>
-
-
-          <h2>
-            Submit a Complaint
-          </h2>
-
-
-          <p class="muted">
-            Provide details so the issue can be
-            identified and resolved faster.
-          </p>
-
+          <button class="back" onclick="showPage('dashboard')">← Return to Citizen Dashboard</button>
+          <h2>Lodge a Civic Grievance</h2>
+          <p class="muted">Provide accurate details, select the affected municipal zone, and pin the exact GPS coordinates for statutory SLA resolution.</p>
         </div>
 
+        <form class="complaint-card" onsubmit="submitComplaint(event)">
+          <div class="two-col">
+            <div>
+              <label>Complaint Category</label>
+              <select id="complaintCategory" onchange="updateSlaBadge()" required>
+                <option value="">Select category</option>
+                <option>Road Damage</option>
+                <option>Street Light</option>
+                <option>Garbage / Waste</option>
+                <option>Water Supply</option>
+                <option>Drainage</option>
+                <option>Other</option>
+              </select>
+            </div>
 
-
-        <form
-          class="complaint-card"
-          onsubmit="submitComplaint(event)"
-        >
-
+            <div>
+              <label>Municipal Zone / Ward</label>
+              <select id="complaintZone">
+                <option value="">Select Municipal Zone</option>
+                <option>Zone 1 - Central Ward</option>
+                <option>Zone 2 - North Zone</option>
+                <option>Zone 3 - South Zone</option>
+                <option>Zone 4 - East Zone</option>
+                <option>Zone 5 - West Industrial Zone</option>
+              </select>
+            </div>
+          </div>
 
           <div class="two-col">
-
-
             <div>
-
-              <label>
-                Complaint Category
-              </label>
-
-              <select
-                id="complaintCategory"
-                required
-              >
-
-                <option value="">
-                  Select category
-                </option>
-
-                <option>
-                  Road Damage
-                </option>
-
-                <option>
-                  Street Light
-                </option>
-
-                <option>
-                  Garbage / Waste
-                </option>
-
-                <option>
-                  Water Supply
-                </option>
-
-                <option>
-                  Drainage
-                </option>
-
-                <option>
-                  Other
-                </option>
-
+              <label>Priority Level</label>
+              <select id="complaintPriority">
+                <option>Normal</option>
+                <option>High</option>
+                <option>Urgent</option>
               </select>
-
             </div>
-
-
-
             <div>
-
-              <label>
-                Priority
-              </label>
-
-              <select
-                id="complaintPriority"
-              >
-
-                <option>
-                  Normal
-                </option>
-
-                <option>
-                  High
-                </option>
-
-                <option>
-                  Urgent
-                </option>
-
-              </select>
-
+              <label>Statutory Resolution SLA</label>
+              <div id="slaNotice" style="padding:11px 14px; background:#F8FAFC; border:1.5px solid #CBD5E1; border-radius:10px; font-size:13.5px; font-weight:700; color:#046A38;">
+                ⏱ Standard SLA: Select Category
+              </div>
             </div>
-
           </div>
 
-
-
-          <label>
-            Description
-          </label>
-
-          <textarea
-            id="complaintDescription"
-            placeholder="Describe the issue..."
-            required
-          ></textarea>
-
-
+          <label>Detailed Issue Description</label>
+          <textarea id="complaintDescription" placeholder="Specify landmark, nature of civic hazard, street name, and exact impact..." required></textarea>
 
           <div class="location-box">
-
             <div>
-
-              <strong>
-                📍 Complaint Location
-              </strong>
-
-              <p id="locationText">
-                Location not selected
-              </p>
-
+              <strong>📍 Verified Geo-Coordinates</strong>
+              <p id="locationText">Location not selected</p>
             </div>
-
-
-            <button
-              type="button"
-              class="btn btn-outline"
-              onclick="getLocation()"
-            >
-              Use My Current Location
+            <button type="button" class="btn btn-outline" onclick="getLocation()">
+              Pin My GPS Location
             </button>
-
           </div>
 
-
-
           <div class="fake-map" id="locationMap"></div>
-            
-          
-          
-          <label>
-            Upload Photo
-          </label>
 
-          <input
-            class="file-input"
-            type="file"
-            accept="image/*"
-          >
+          <label style="margin-top: 18px;">Attach Ground Photo Evidence (Max 5 MB)</label>
+          <input class="file-input full" type="file" accept="image/*">
 
-
-
-          <button
-            class="btn btn-primary full btn-large"
-            type="submit"
-          >
-            Submit Complaint
+          <button class="btn btn-hero-green full btn-large" style="margin-top: 24px;" type="submit">
+            Submit Grievance to Municipal Authority
           </button>
-
         </form>
-
       </div>
-
     </section>
-
 
   </main>
 
+  <!-- =================================================
+       INSTANT DOCKET TRACKING MODAL (NO LOGIN NEEDED)
+  ================================================== -->
+  <div id="trackModal" class="modal-overlay" onclick="handleModalClick(event)">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>🔍 Track Civic Grievance Docket</h3>
+        <button class="modal-close" onclick="closeTrackModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="muted" style="margin: 0 0 14px; font-size: 13.5px;">
+          Enter your <strong>Complaint ID</strong> or registered contact to check live municipal resolution progress and SLA status.
+        </p>
+        <div class="track-input-row">
+          <input id="trackDocketInput" type="text" placeholder="e.g. COMP-2026-8491 or Phone">
+          <button class="btn btn-primary" onclick="searchDocket()">Check Status</button>
+        </div>
 
+        <div id="trackResultBox" class="track-result-box">
+          <div class="track-status-line">
+            <div>
+              <strong id="resultDocketId" style="font-size:15px; color:#0F172A;">DOCKET #COMP-2026-8491</strong>
+              <span id="resultCategory" style="display:block; font-size:12px; color:#64748B; margin-top:2px;">Road Damage • Central Zone</span>
+            </div>
+            <span id="resultBadge" class="tag in-progress">Under Review</span>
+          </div>
 
-  
+          <div style="font-size:13px; color:#334155; line-height:1.5;">
+            <div><strong>Location:</strong> <span id="resultLocation">MG Road / Ward 12</span></div>
+            <div><strong>Lodged Date:</strong> <span id="resultDate">07 September 2026</span></div>
+            <div><strong>Statutory SLA:</strong> <span id="resultSla" style="color:#046A38; font-weight:700;">Within SLA (36 Hours Remaining)</span></div>
+            <div><strong>Assigned Department:</strong> <span id="resultDept">Public Works Dept (Roads Wing)</span></div>
+          </div>
 
+          <div class="track-timeline">
+            <div class="timeline-step">
+              <span class="step-dot active"></span>
+              <span><strong>Grievance Lodged:</strong> Recorded & Geo-Tagged</span>
+            </div>
+            <div class="timeline-step">
+              <span class="step-dot active"></span>
+              <span><strong>Zonal Review:</strong> Assigned to Field Officer</span>
+            </div>
+            <div class="timeline-step">
+              <span class="step-dot current"></span>
+              <span><strong>Investigation in Progress:</strong> Ground team dispatched</span>
+            </div>
+            <div class="timeline-step">
+              <span class="step-dot"></span>
+              <span style="color:#94A3B8;"><strong>Resolution & Photo Verification:</strong> Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================
+       GIGW & DIGITAL INDIA COMPLIANT CIVIC FOOTER
+  ================================================== -->
+  <footer>
+    <div class="footer-content">
+      <div>
+        <strong>GeoTagged National Grievance Portal</strong> — Government of India Civic Technology Initiative.
+        <div style="font-size: 11.5px; color: #94A3B8; margin-top: 4px;">
+          Developed in adherence with Guidelines for Indian Government Websites (GIGW) & Digital India Standards.
+        </div>
+      </div>
+      <div style="display: flex; gap: 18px; font-size: 12.5px; font-weight: 600;">
+        <a href="#charter" style="color:#64748B; text-decoration:none;">Citizen's Charter</a>
+        <a href="#features" style="color:#64748B; text-decoration:none;">RTI Guidelines</a>
+        <a onclick="openTrackModal()" style="color:#64748B; text-decoration:none; cursor:pointer;">Track Status</a>
+        <a onclick="showPage('agentLogin')" style="color:#046A38; text-decoration:none; cursor:pointer;">Officer Portal</a>
+      </div>
+    </div>
+    <div class="footer-tricolor"></div>
+  </footer>
+
+  <!-- =================================================
+       CLIENT UTILITIES & SYNC HELPER
+  ================================================== -->
+  <script>
+    // Greeting synchronization
+    const userEl = document.getElementById("userName");
+    const greetEl = document.getElementById("userNameGreeting");
+    if (userEl && greetEl) {
+      const observer = new MutationObserver(() => {
+        if (userEl.textContent) greetEl.textContent = userEl.textContent;
+      });
+      observer.observe(userEl, { childList: true, characterData: true, subtree: true });
+    }
+
+    // Dashboard layout full-height toggle
+    window.addEventListener("DOMContentLoaded", () => {
+      const origShowPage = window.showPage;
+      if (origShowPage) {
+        window.showPage = function(id) {
+          origShowPage(id);
+          if (id === "dashboard" || id === "agentDashboard") {
+            document.body.classList.add("in-dashboard");
+          } else {
+            document.body.classList.remove("in-dashboard");
+          }
+          setTimeout(() => {
+            window.dispatchEvent(new Event("resize"));
+          }, 350);
+        };
+      }
+    });
+
+    // Category SLA Notice in Submission Form
+    function updateSlaBadge() {
+      const cat = document.getElementById("complaintCategory")?.value;
+      const notice = document.getElementById("slaNotice");
+      if (!notice) return;
+      const map = {
+        "Garbage / Waste": "⚡ SLA: 24 Hours (Health & Sanitation)",
+        "Water Supply": "⚡ SLA: 24 Hours (Water Board)",
+        "Street Light": "⏱ SLA: 48 Hours (Electrical Division)",
+        "Drainage": "⏱ SLA: 48 Hours (Storm Water Wing)",
+        "Road Damage": "⏱ SLA: 7 Working Days (PWD Roads)",
+        "Other": "⏱ SLA: 5 Working Days (Town Planning)"
+      };
+      notice.textContent = map[cat] || "⏱ Standard SLA: Select Category";
+    }
+
+    // Instant Docket Tracker Modal functions
+    function openTrackModal() {
+      document.getElementById("trackModal")?.classList.add("open");
+      document.getElementById("trackDocketInput")?.focus();
+    }
+
+    function closeTrackModal() {
+      document.getElementById("trackModal")?.classList.remove("open");
+    }
+
+    function handleModalClick(e) {
+      if (e.target.id === "trackModal") closeTrackModal();
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeTrackModal();
+    });
+
+    function searchDocket() {
+      const input = document.getElementById("trackDocketInput")?.value.trim();
+      const resultBox = document.getElementById("trackResultBox");
+      if (!input) {
+        alert("Please enter a valid Complaint ID or Mobile number.");
+        return;
+      }
+      if (resultBox) {
+        resultBox.classList.add("visible");
+        const docIdEl = document.getElementById("resultDocketId");
+        if (docIdEl) docIdEl.textContent = "DOCKET #" + (input.toUpperCase().startsWith("COMP") ? input.toUpperCase() : "COMP-2026-" + input.slice(-4));
+      }
+    }
+
+    // GIGW Accessibility Functions
+    function setFontSize(size) {
+      document.body.classList.remove("font-small", "font-large");
+      if (size === "small") document.body.classList.add("font-small");
+      if (size === "large") document.body.classList.add("font-large");
+    }
+
+    function toggleContrast() {
+      document.body.classList.toggle("high-contrast");
+    }
+
+    let isHindi = false;
+    function toggleLang() {
+      isHindi = !isHindi;
+      const btn = document.getElementById("langBtn");
+      if (btn) btn.textContent = isHindi ? "English" : "हिन्दी";
+    }
+  </script>
+
+  <!-- Leaflet and Core Script (Preserved 100%) -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <script
-    type="module"
-    src="script.js"
-  ></script>
-
+  <script type="module" src="script.js"></script>
 
 </body>
-
 </html>
