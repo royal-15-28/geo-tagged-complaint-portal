@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoTagged - National Civic Grievance & Municipal Redressal Portal</title>
+  <title>GeoTrack - National Civic Grievance & Municipal Redressal Portal</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📍</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,8 +16,8 @@
   <!-- Official GIGW Government Accessibility & Helpline Bar -->
   <div class="gov-top-bar">
     <div class="gov-top-left">
-      <span class="emblem-tag">🏛️ सत्यमेव जयते</span>
-      <span>GOVERNMENT OF INDIA • URBAN LOCAL BODIES PUBLIC GRIEVANCE PORTAL</span>
+      <span class="emblem-tag">🏛️ Truth Alone Triumphs</span>
+      <span>URBAN LOCAL BODIES PUBLIC GRIEVANCE PORTAL</span>
     </div>
     <div class="gov-top-right">
       <span class="helpline-badge">📞 TOLL-FREE: 1913 | EMERGENCY: 112</span>
@@ -27,7 +27,12 @@
         <button class="access-btn" onclick="setFontSize('large')" title="Increase Font">A+</button>
         <button class="access-btn" onclick="toggleContrast()" title="High Contrast Mode">🌓</button>
         <span style="color:#64748B;">|</span>
-        <button class="access-btn" onclick="toggleLang()" id="langBtn">हिन्दी</button>
+        <div id="languageSelector" class="lang-pills notranslate">
+          <button class="lang-btn active" data-lang="en" onclick="changePortalLanguage('en')">English</button>
+          <button class="lang-btn" data-lang="ta" onclick="changePortalLanguage('ta')">தமிழ் (Tamil)</button>
+          <button class="lang-btn" data-lang="hi" onclick="changePortalLanguage('hi')">हिन्दी (Hindi)</button>
+        </div>
+        <div id="google_translate_element" style="display:none;"></div>
       </div>
     </div>
   </div>
@@ -52,7 +57,7 @@
         </defs>
       </svg>
       <div>
-        <div class="brand">Geo<span>Tagged</span></div>
+        <div class="brand">Geo<span>Track</span></div>
         <span class="brand-subtitle">National Civic Grievance Portal</span>
       </div>
     </div>
@@ -278,7 +283,7 @@
       <div class="auth-wrap">
         <div class="auth-card">
           <button class="back" onclick="showPage('home')">← Back to Portal Home</button>
-          <div class="auth-logo">Geo<span>Tagged</span> Citizen Portal</div>
+          <div class="auth-logo">Geo<span>Track</span> Citizen Portal</div>
           <h2>Citizen Authentication</h2>
           <p class="muted">Login with your registered credentials to lodge and track grievances.</p>
 
@@ -312,7 +317,7 @@
       <div class="auth-wrap">
         <div class="auth-card">
           <button class="back" onclick="showPage('home')">← Back to Portal Home</button>
-          <div class="auth-logo">Geo<span>Tagged</span> Officer Portal</div>
+          <div class="auth-logo">Geo<span>Track</span> Officer Portal</div>
           <h2>Municipal Officer Login</h2>
           <p class="muted">Restricted access for designated Zonal and Ward Field Officers.</p>
 
@@ -341,7 +346,7 @@
       <div class="auth-wrap">
         <div class="auth-card wide">
           <button class="back" onclick="showPage('home')">← Back to Portal Home</button>
-          <div class="auth-logo">Geo<span>Tagged</span> Citizen Portal</div>
+          <div class="auth-logo">Geo<span>Track</span> Citizen Portal</div>
           <h2>New Citizen Registration</h2>
           <p class="muted">Create an account to participate in municipal grievance reporting and earn civic credits.</p>
 
@@ -396,7 +401,7 @@
                 <circle cx="20" cy="15" r="5" fill="#0A192F"/>
               </svg>
               <div>
-                <h2>Geo<span>Tagged</span></h2>
+                <h2>Geo<span>Track</span></h2>
                 <span class="sidebar-panel-tag">Citizen Panel</span>
               </div>
             </div>
@@ -543,7 +548,7 @@
                 <circle cx="20" cy="15" r="5" fill="#0A192F"/>
               </svg>
               <div>
-                <h2>Geo<span>Tagged</span></h2>
+                <h2>Geo<span>Track</span></h2>
                 <span class="sidebar-panel-tag">Municipal Officer Panel</span>
               </div>
             </div>
@@ -721,6 +726,10 @@
           <label>Detailed Issue Description</label>
           <textarea id="complaintDescription" placeholder="Specify landmark, nature of civic hazard, street name, and exact impact..." required></textarea>
 
+          
+          <!-- Duplicate Detection Alert Box -->
+          <div id="duplicateNoticeBox" class="duplicate-alert" style="display: none;"></div>
+
           <div class="location-box">
             <div>
               <strong>📍 Verified Geo-Coordinates</strong>
@@ -805,17 +814,17 @@
   <!-- =================================================
        GIGW & DIGITAL INDIA COMPLIANT CIVIC FOOTER
   ================================================== -->
-  <footer>
+    <footer>
     <div class="footer-content">
       <div>
-        <strong>GeoTagged National Grievance Portal</strong> — Government of India Civic Technology Initiative.
-        <div style="font-size: 11.5px; color: #94A3B8; margin-top: 4px;">
-          Developed in adherence with Guidelines for Indian Government Websites (GIGW) & Digital India Standards.
+        <strong>GeoTrack National Grievance Portal</strong>
+        <div style="font-size: 12.5px; color: #64748B; margin-top: 4px;">
+          An AI-Assisted Geo-Tagged Civic Complaint Portal with Reward-Based Citizen Engagement.
         </div>
       </div>
-      <div style="display: flex; gap: 18px; font-size: 12.5px; font-weight: 600;">
+      <div style="display: flex; gap: 20px; font-size: 13px; font-weight: 600;">
         <a href="#charter" style="color:#64748B; text-decoration:none;">Citizen's Charter</a>
-        <a href="#features" style="color:#64748B; text-decoration:none;">RTI Guidelines</a>
+        <a href="#features" style="color:#64748B; text-decoration:none;">Features</a>
         <a onclick="openTrackModal()" style="color:#64748B; text-decoration:none; cursor:pointer;">Track Status</a>
         <a onclick="showPage('agentLogin')" style="color:#046A38; text-decoration:none; cursor:pointer;">Officer Portal</a>
       </div>
@@ -925,6 +934,50 @@
   <!-- Leaflet and Core Script (Preserved 100%) -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module" src="script.js"></script>
+
+
+  <!-- Google Translate End-to-End Multilingual Engine -->
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,ta,hi,te,kn,ml',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+
+    function changePortalLanguage(lang) {
+      // Update active state on buttons
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+
+      // Set Google translation cookie
+      const cookieVal = (lang === 'en') ? '' : '/en/' + lang;
+      document.cookie = "googtrans=" + cookieVal + "; path=/";
+      document.cookie = "googtrans=" + cookieVal + "; path=/; domain=" + window.location.hostname;
+      localStorage.setItem('portal_lang', lang);
+
+      // Trigger translation combo if loaded
+      const select = document.querySelector('.goog-te-combo');
+      if (select) {
+        select.value = lang;
+        select.dispatchEvent(new Event('change'));
+      } else {
+        window.location.reload();
+      }
+    }
+
+    // Restore saved language on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('portal_lang') || 'en';
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === savedLang);
+      });
+    });
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
 </html>

@@ -1,3 +1,118 @@
+
+/* =====================================================
+   ACADEMIC SLA, DUPLICATE DETECTION & TRANSLATION
+===================================================== */
+function getSlaBadge(createdAt, status) {
+  if (status === "Resolved") {
+    return '<span class="sla-badge resolved">✅ Resolved</span>';
+  }
+  const created = new Date(createdAt || Date.now()).getTime();
+  const now = Date.now();
+  const elapsedDays = Math.max(0, Math.floor((now - created) / (1000 * 60 * 60 * 24)));
+  
+  if (elapsedDays > 12) {
+    return `<span class="sla-badge overdue">⚠️ Day ${elapsedDays}/12 — Overdue (Escalated to Zonal Authority)</span>`;
+  } else if (elapsedDays >= 10) {
+    return `<span class="sla-badge target">⏱ Day ${elapsedDays}/12 — Target Resolution Window</span>`;
+  } else if (elapsedDays >= 4) {
+    return `<span class="sla-badge progress">🔄 Day ${elapsedDays}/12 — Work in Progress</span>`;
+  } else {
+    return `<span class="sla-badge assigned">📋 Day ${elapsedDays}/12 — Acknowledged & Assigned</span>`;
+  }
+}
+
+function getDistanceMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+async function checkProximityDuplicates(lat, lng) {
+  const noticeBox = document.getElementById("duplicateNoticeBox");
+  if (!noticeBox) return;
+  try {
+    const { data, error } = await supabase
+      .from("complaints")
+      .select("id, category, latitude, longitude, status")
+      .limit(50);
+    if (error || !data) return;
+    
+    const nearby = data.find(c => {
+      if (c.status === "Resolved") return false;
+      const dist = getDistanceMeters(lat, lng, c.latitude, c.longitude);
+      return dist <= 150;
+    });
+
+    if (nearby) {
+      const dist = Math.round(getDistanceMeters(lat, lng, nearby.latitude, nearby.longitude));
+      noticeBox.style.display = "block";
+      noticeBox.innerHTML = `
+        <span>⚠️ <strong>Proximity Alert (Duplicate Check):</strong> A similar complaint (Docket #${nearby.id.slice(0, 8)}) was detected ~${dist}m from your location. Your report will be linked to prevent redundant municipal dispatch.</span>
+      `;
+    } else {
+      noticeBox.style.display = "none";
+    }
+  } catch (e) {
+    console.warn("Duplicate check warning:", e);
+  }
+}
+
+function civicTranslate(text, lang) {
+  const hiMap = {
+    "pothole": "सड़क पर गड्ढा (Pothole)",
+    "road": "सड़क (Road)",
+    "garbage": "कचरा (Garbage)",
+    "waste": "अपशिष्ट (Waste)",
+    "street light": "स्ट्रीट लाइट (Streetlight)",
+    "water": "पानी की आपूर्ति (Water Supply)",
+    "drainage": "नाली की समस्या (Drainage)"
+  };
+  const taMap = {
+    "pothole": "சாலையில் குழி (Pothole)",
+    "road": "சாலை (Road)",
+    "garbage": "குப்பை (Garbage)",
+    "waste": "கழிவு (Waste)",
+    "street light": "தெரு விளக்கு (Streetlight)",
+    "water": "குடிநீர் விநியோகம் (Water Supply)",
+    "drainage": "வடிகால் அடைப்பு (Drainage)"
+  };
+  const map = lang === "hi" ? hiMap : taMap;
+  let res = text;
+  for (const [k, v] of Object.entries(map)) {
+    res = res.replace(new RegExp(k, "gi"), v);
+  }
+  return res !== text ? res : (lang === "hi" ? "नागरिक समस्या: " + text : "குடிமக்கள் புகார்: " + text);
+}
+
+window.toggleTranslation = function(btn) {
+  const descEl = btn.closest(".complaint-info, .agent-card-section")?.querySelector(".complaint-desc, .agent-card-description");
+  if (!descEl) return;
+  const original = descEl.getAttribute("data-original") || descEl.textContent.trim();
+  if (!descEl.getAttribute("data-original")) {
+    descEl.setAttribute("data-original", original);
+  }
+  const currentLang = descEl.getAttribute("data-lang") || "en";
+  
+  if (currentLang === "en") {
+    descEl.textContent = civicTranslate(original, "hi");
+    descEl.setAttribute("data-lang", "hi");
+    btn.textContent = "🌐 Show Tamil";
+  } else if (currentLang === "hi") {
+    descEl.textContent = civicTranslate(original, "ta");
+    descEl.setAttribute("data-lang", "ta");
+    btn.textContent = "🌐 Show Original";
+  } else {
+    descEl.textContent = original;
+    descEl.setAttribute("data-lang", "en");
+    btn.textContent = "🌐 Translate";
+  }
+};
+
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 /* =====================================================
@@ -415,6 +530,7 @@ function getLocation() {
         latitude,
         longitude
       };
+      checkProximityDuplicates(latitude, longitude);
 
       updateLocationText(
         latitude,
@@ -896,12 +1012,16 @@ async function loadCitizenComplaints() {
             ).toFixed(5)}
           </span>
 
-          <span>
+          <span class="complaint-desc" data-original="${escapeHtml(complaint.description || "")}">
             ${escapeHtml(
               complaint.description ||
               ""
             )}
           </span>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:6px;">
+            ${getSlaBadge(complaint.created_at, complaint.status)}
+            <button type="button" class="trans-btn" onclick="toggleTranslation(this)">🌐 Translate</button>
+          </div>
         </div>
 
         <span class="tag ${statusClass(
@@ -1507,8 +1627,12 @@ async function createAgentCard(complaint) {
           : ""
       }
 
-      <div class="agent-card-description">
+      <div class="agent-card-description" data-original="${escapeHtml(description)}">
         ${description}
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:6px;">
+        ${getSlaBadge(complaint.created_at, complaint.status)}
+        <button type="button" class="trans-btn" onclick="toggleTranslation(this)">🌐 Translate</button>
       </div>
 
       <span class="agent-priority">
