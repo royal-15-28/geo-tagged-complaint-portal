@@ -778,12 +778,23 @@ async function submitComplaint(e) {
     return;
   }
 
-  if (!window.currentLocation) {
-    alert(
-      "Please select a location on the map."
-    );
-    return;
+  
+  // ---------- Duplicate check before proceeding ----------
+  const isDuplicate = await checkProximityDuplicates(
+    window.currentLocation.latitude,
+    window.currentLocation.longitude
+  );
+  if (isDuplicate) {
+    // Show error banner and abort submission
+    const duplicateBox = document.getElementById('duplicateNoticeBox');
+    if (duplicateBox) {
+      duplicateBox.textContent = '⚠️ A similar complaint already exists within 150 m. Please verify before submitting.';
+      duplicateBox.classList.add('error');
+      duplicateBox.style.display = 'block';
+    }
+    return; // stop submission
   }
+
 
   if (file) {
 
